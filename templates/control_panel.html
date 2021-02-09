@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/25.0.0/classic/ckeditor.js"></script>
+    
+    <script >
+        function product_create_show(){
+            if(!$("#product_create_editor").is(':visible')){
+                $("#product_create_editor").show()
+            }else{
+                $("#product_create_editor").hide()
+            }
+        }
+        function product_editor_show(id){
+            select_id='#product_edit'+id
+            if(!$(select_id).is(':visible')){
+                $(select_id).show()
+            }
+            else{
+                $(select_id).hide()
+            }
+        }
+        function product_create(){
+            var token= $.cookie('token')
+            var csrf_token = '{{csrf_token}}'
+            $.ajax({
+                headers: { "X-CSRFToken": csrf_token ,"Authorization":"Token "+token},
+                url:'/product_list/',
+                type:'post',
+                data:{
+                    name:$("#product_create_name").val().trim(),
+                    sale_price:$("#product_create_sale_price").val().trim(),
+                    purchase_price:$("#product_create_purchase_price").val().trim(),
+                    stock:$("#product_create_stock").val().trim(),
+                    description:$("#product_create_description").val().trim(),
+                },
+                success:function(response){
+                    window.alert(response.message)
+                    location.reload();
+                },
+            });
+        }
+        function product_detail_update(id){
+            var token= $.cookie('token')
+            var csrf_token = '{{csrf_token}}'
+            $.ajax({
+                headers: { "X-CSRFToken": csrf_token ,"Authorization":"Token "+token},
+                url:'/product_detail/'+id,
+                type:'put',
+                data:{
+                    name:$("#product_name"+id).val().trim(),
+                    sale_price:$("#product_sale_price"+id).val().trim(),
+                    purchase_price:$("#product_purchase_price"+id).val().trim(),
+                    stock:$("#product_stock"+id).val().trim(),
+                    description:$("#product_description"+id).val().trim(),
+                },
+                success:function(response){
+                    window.alert(response.message)
+                    location.reload();
+                },
+            });
+        }
+        function product_delete(id){
+            var token= $.cookie('token')
+            var csrf_token = '{{csrf_token}}'
+            $.ajax({
+                headers: { "X-CSRFToken": csrf_token ,"Authorization":"Token "+token},
+                url:'/product_detail/'+id,
+                type:'delete',
+                data:{},
+                success:function(response){
+                    window.alert(response.message)
+                    location.reload();
+                },
+            });
+        }
+    </script>
+    <script>
+        function machine_create_show(){
+            if(!$("#machine_create_editor").is(':visible')){
+                $("#machine_create_editor").show()
+            }else{
+                $("#machine_create_editor").hide()
+            }
+        }
+        function machine_editor_show(id){
+            var select_id='#machine_editor'+id
+            if(!$(select_id).is(':visible')){
+                $(select_id).show()
+            }
+            else{
+                $(select_id).hide()
+            }
+        }
+        function machine_create(){
+            var token= $.cookie('token')
+            var csrf_token = '{{csrf_token}}'
+            $.ajax({
+                headers: { "X-CSRFToken": csrf_token ,"Authorization":"Token "+token},
+                url:'/machine_list/',
+                type:'post',
+                data:{
+                    name:$("#machine_create_name").val(),
+                    location:$("#machine_create_location").val(),
+                },
+                success:function(response){
+                    window.alert(response.message)
+                    location.reload();
+                },
+            });
+        }
+        function machine_detail_update(id){
+            var token= $.cookie('token')
+            var csrf_token = '{{csrf_token}}'
+            $.ajax({
+                headers: { "X-CSRFToken": csrf_token ,"Authorization":"Token "+token},
+                url:'/machine_detail/'+id,
+                type:'put',
+                data:{
+                    name:$("#machine_name"+id).val().trim(),
+                    location:$("#machine_location"+id).val().trim(),
+                },
+                success:function(response){
+                    window.alert(response.message)
+                    
+                },
+            });
+        }
+        function machine_delete(id){
+            var token= $.cookie('token')
+            var csrf_token = '{{csrf_token}}'
+            $.ajax({
+                headers: { "X-CSRFToken": csrf_token ,"Authorization":"Token "+token},
+                url:'/machine_detail/'+id,
+                type:'delete',
+                data:{},
+                success:function(response){
+                    window.alert(response.message)
+                    location.reload();
+                },
+            });
+        }
+        function machine_add_product(id){
+            var token= $.cookie('token')
+            var csrf_token = '{{csrf_token}}'
+            
+            $.ajax({
+                headers: { "X-CSRFToken": csrf_token ,"Authorization":"Token "+token},
+                url:'/machine_add_product/'+id,
+                type:'post',
+                data:{product_id:$("#product_select"+id).val()},
+                success:function(response){
+                    window.alert(response.message)
+                    location.reload();
+                },
+            });
+        }
+    </script>
+    <script>
+        function logout(){
+            var token= $.cookie('token')
+            var csrf_token = '{{csrf_token}}'
+
+            $.ajax({
+                headers: { "X-CSRFToken": csrf_token ,"Authorization":"Token "+token},
+                url:'/logout/',
+                type:'post',
+                success:function(response){
+                    window.alert(response.message)
+                    $.cookie('token',null,{path:'/'})
+                    window.location.replace("/login_page/");
+                },
+            });
+        }
+    </script>
+</head>
+<body>
+    <button onclick="logout()">登出</button>
+    <div>
+        <div>商品</div> <button onclick="product_create_show()" >新增</button>
+        <div id="product_create_editor" style="display: none;">
+            <label for="name">名稱</label>              <input id="product_create_name" type="text"  required>
+            <label for="purchase_price">進價</label>    <input id="product_create_purchase_price" type="text"  required>
+            <label for="sale_price">售價</label>        <input id="product_create_sale_price" type="text"  required>
+            <label for="stock">庫存</label>             <input id="product_create_stock" type="text"  required>
+            <label for="description">說明</label>       <textarea id="product_create_description" type="text" ></textarea>
+            <button onclick="product_create()">送出</button>
+        </div>
+        
+        {% for product in products %}
+        <div class="product" onclick="product_editor_show({{product.id}})">
+            <div>id:{{product.id}}</div>
+            <div>名稱:{{product.name}}</div>
+            <div>進價:{{product.purchase_price}}</div>
+            <div>售價:{{product.sale_price}}</div>
+            <div>庫存:{{product.stock}}</div>
+            <div>說明:{{product.description}}</div>
+        </div>
+        <div id="product_edit{{product.id}}" style="display:none;">
+            <label for="name">名稱</label>              <input id="product_name{{product.id}}" type="text" value="{{product.name}}" required>
+            <label for="purchase_price">進價</label>    <input id="product_purchase_price{{product.id}}" type="text" value="{{product.purchase_price}}" required>
+            <label for="sale_price">售價</label>        <input id="product_sale_price{{product.id}}" type="text" value="{{product.sale_price}}" required>
+            <label for="stock">庫存</label>             <input id="product_stock{{product.id}}" type="text" value="{{product.stock}}" required>
+            <label for="description">說明</label>       <textarea id="product_description{{product.id}}" type="text" >{{product.description}}</textarea>
+            <button  onclick="product_detail_update({{product.id}})" type="submit">更新</button>
+            <button  onclick="product_delete({{product.id}})" type="submit">刪除</button>
+
+            <div >
+                <div>放置機器:</div>
+                {% for machine in product.machines.all %}
+                <div>{{machine.name}}</div>
+                <div>{{machine.location}}</div>
+                {% endfor %}
+            </div>
+            <div >
+                <div>交易紀錄:</div>
+                {% for transaction in product.transactions.all %}
+                <div>{{transaction.id}}</div>
+                <div>{{transaction.dateTime}}</div>
+                {% endfor %}
+            </div>
+            <div >
+                <div>捕貨紀錄:</div>
+                {% for restock in product.restocks.all %}
+                <div>{{restock.id}}</div>
+                <div>{{restock.dateTime}}</div>
+                {% endfor %}
+            </div>
+
+        </div>
+        
+        {% endfor %}
+    </div>
+
+
+
+    <br><br>
+
+
+    <div>
+        <div>機器</div><button onclick="machine_create_show()" >新增</button>
+        <div id="machine_create_editor" style="display: none;">
+            <label for="name">名稱</label>              <input id="machine_create_name" type="text"  required>
+            <label for="location">地點</label>    <input id="machine_create_location" type="text"  required>
+            <button onclick="machine_create()">送出</button>
+        </div>
+        {% for machine in machines %}
+        <ul onclick="machine_editor_show({{machine.id}})" >
+            <li>名稱:{{machine.name}}</li>
+            <li>地點:{{machine.location}}</li>
+        </ul>
+        <div id="machine_editor{{machine.id}}" style="display:none;">
+            <label for="name">名稱</label>              <input id="machine_name{{machine.id}}" type="text" value="{{machine.name}}" required>
+            <label for="location">地點</label>    <input id="machine_location{{machine.id}}" type="text" value="{{machine.location}}" required>
+            <button  onclick="machine_detail_update({{machine.id}})" type="submit">更新</button>
+            <button  onclick="machine_delete({{machine.id}})" type="submit">刪除</button>
+
+            <div>
+                <div>現有商品:</div>
+                <button onclick="machine_add_product({{machine.id}})">增加商品</button>
+                <select id="product_select{{machine.id}}"  >
+                    {% for product in products %}
+                    <option value="{{product.id}}">{{product.name}}</option>
+                    {% endfor %}
+                </select>
+                {% for product in machine.products.all %}
+                <div>{{product.name}}</div>
+                {% endfor %}
+            </div>
+    
+            <div>
+                <div>交易紀錄:</div>
+                {% for transaction in machine.transactions.all %}
+                <div>{{transaction.id}}</div>
+                <div>{{transaction.dateTime}}</div>
+                {% endfor %}
+            </div>
+    
+            <div>
+                <div>捕貨紀錄:</div>
+                {% for restock in machine.restocks.all %}
+                <div>{{restock.id}}</div>
+                <div>{{restock.dateTime}}</div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        
+
+        {% endfor %}
+    </div>
+
+
+    <br><br>
+
+
+    <div>
+        <div>交易</div>
+        {% for transaction in transactions %}
+        <ul>
+            <li>id:{{transaction.id}}</li>
+            <li>商品:{{transaction.name}}</li>
+            <li>機器:{{transaction.machine}}</li>
+            <li>收入:{{transaction.revenue}}</li>
+            <li>利潤:{{transaction.profit}}</li>
+            <li>數量:{{transaction.amount}}</li>
+            <li>日期:{{transaction.dateTime}}</li>
+        </ul>
+        {% endfor %}
+    </div>
+
+
+    <br><br>
+
+
+    <div>
+        <div>補貨</div>
+        {% for restock in restocks %}
+        <ul>
+            <li>id:{{restock.id}}</li>
+            <li>商品:{{restock.name}}</li>
+            <li>價值:{{restock.value}}</li>
+            <li>數量:{{restock.amount}}</li>
+            <li>日期:{{restock.dateTime}}</li>
+        </ul>
+        {% endfor %}
+    </div>
+   
+</body>
